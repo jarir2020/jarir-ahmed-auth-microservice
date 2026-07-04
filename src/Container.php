@@ -9,6 +9,17 @@ class Container implements ContainerInterface
     private array $bindings  = [];
     private array $instances = [];
 
+    public function __construct()
+    {
+        $this->bind(\JarirAhmed\AuthMicroservice\Contracts\UserRepositoryInterface::class, function () {
+            return new \JarirAhmed\AuthMicroservice\Repositories\UserRepository();
+        });
+        
+        $this->bind(\JarirAhmed\AuthMicroservice\Contracts\TokenRepositoryInterface::class, function () {
+            return new \JarirAhmed\AuthMicroservice\Repositories\TokenRepository();
+        });
+    }
+
     public function bind(string $abstract, callable $factory): void
     {
         $this->bindings[$abstract] = $factory;

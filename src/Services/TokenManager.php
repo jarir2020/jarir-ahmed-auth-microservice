@@ -5,15 +5,19 @@ namespace JarirAhmed\AuthMicroservice\Services;
 use JarirAhmed\AuthMicroservice\Models\PersonalAccessToken;
 use Carbon\Carbon;
 
+use JarirAhmed\AuthMicroservice\Contracts\TokenRepositoryInterface;
+
 class TokenManager
 {
+    public function __construct(private TokenRepositoryInterface $tokenRepository) {}
+
     public function generate(mixed $user, string $name, array $scopes = [], int $expiryDays = null): array
     {
         $plaintext = bin2hex(random_bytes(32)); // 64-char hex
         $hash = hash('sha256', $plaintext);
         $expiryDays ??= config('auth-microservice.tokens.default_expiry_days', 365);
 
-        $token = PersonalAccessToken::create([
+        $token = $this->tokenRepository->create([
             'user_id'    => $user->getKey(),
             'name'       => $name,
             'token'      => $hash,
@@ -24,20 +28,22 @@ class TokenManager
         return ['token' => $plaintext, 'model' => $token];
     }
 
-    public function find(string $plaintext): ?PersonalAccessToken
+    public function find(string $plaintext): ?object
     {
         $hash = hash('sha256', $plaintext);
-        return PersonalAccessToken::where('token', $hash)->first();
+        return $this->tokenRepository->findByToken($hash);
     }
 
-    public function revoke(PersonalAccessToken $token): void
+    public function revoke(object $token): void
     {
-        $token->update(['revoked_at' => now()]);
+        if (method_exists($token, 'update')) {
+            $token->update(['revoked_at' => now()]);
+        }
     }
 
-    public function refresh(PersonalAccessToken $token, mixed $user): array
+    public function refresh(object $token, mixed $user): array
     {
         $this->revoke($token);
-        return $this->generate($user, $token->name, $token->scopes ?? [], 365);
+        return $this->generate($user, $token->name ?? 'Token', $token->scopes ?? [], 365);
     }
 }
