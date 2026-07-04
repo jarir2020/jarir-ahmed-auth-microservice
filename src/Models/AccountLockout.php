@@ -2,26 +2,21 @@
 
 namespace JarirAhmed\AuthMicroservice\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use JarirAhmed\AuthMicroservice\Database\Model;
 
 class AccountLockout extends Model
 {
-    protected $fillable = ['user_id', 'failed_attempts', 'locked_until', 'unlocked_at', 'unlocked_by'];
+    protected static string $table = 'account_lockouts';
 
-    protected $casts = [
+    protected static array $casts = [
         'locked_until' => 'datetime',
         'unlocked_at'  => 'datetime',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(config('auth-microservice.user_model'));
-    }
-
     public function isLocked(): bool
     {
         return $this->locked_until !== null
-            && $this->locked_until->isFuture()
+            && $this->locked_until > new \DateTimeImmutable()
             && $this->unlocked_at === null;
     }
 }

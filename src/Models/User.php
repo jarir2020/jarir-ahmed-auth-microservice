@@ -2,56 +2,24 @@
 
 namespace JarirAhmed\AuthMicroservice\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use JarirAhmed\AuthMicroservice\Database\Model;
 use JarirAhmed\AuthMicroservice\Traits\TwoFactorAuthenticatable;
+use JarirAhmed\AuthMicroservice\Config;
 
-class User extends Authenticatable
+class User extends Model
 {
-    use Notifiable, TwoFactorAuthenticatable;
+    protected static string $table = 'users';
 
-    protected $fillable = [
-        'name', 'email', 'password',
-        'email_verified_at', 'email_verification_token', 'email_verification_sent_at',
-        'two_factor_enabled', 'two_factor_secret',
-        'last_online_at', 'is_banned', 'ban_reason', 'notification_preferences',
+    protected static array $casts = [
+        'email_verified_at'          => 'datetime',
+        'email_verification_sent_at' => 'datetime',
+        'last_online_at'             => 'datetime',
+        'two_factor_enabled'         => 'boolean',
+        'is_banned'                  => 'boolean',
+        'notification_preferences'   => 'json',
     ];
 
-    protected $hidden = ['password', 'remember_token', 'two_factor_secret', 'email_verification_token'];
-
-    protected $casts = [
-        'email_verified_at'           => 'datetime',
-        'email_verification_sent_at'  => 'datetime',
-        'last_online_at'              => 'datetime',
-        'two_factor_enabled'          => 'boolean',
-        'is_banned'                   => 'boolean',
-        'notification_preferences'    => 'array',
-    ];
-
-    public function loginHistories()
-    {
-        return $this->hasMany(LoginHistory::class);
-    }
-
-    public function auditLogs()
-    {
-        return $this->hasMany(AuditLog::class);
-    }
-
-    public function personalAccessTokens()
-    {
-        return $this->hasMany(PersonalAccessToken::class);
-    }
-
-    public function lockout()
-    {
-        return $this->hasOne(AccountLockout::class);
-    }
-
-    public function dataExportRequests()
-    {
-        return $this->hasMany(DataExportRequest::class);
-    }
+    use TwoFactorAuthenticatable;
 
     public function isEmailVerified(): bool
     {
@@ -61,6 +29,26 @@ class User extends Authenticatable
     public function wantsNotification(string $type): bool
     {
         $prefs = $this->notification_preferences ?? [];
-        return $prefs[$type] ?? config("auth-microservice.notifications.{$type}", true);
+        return $prefs[$type] ?? Config::get("auth-microservice.notifications.{$type}", true);
+    }
+
+    public function loginHistories(): array
+    {
+        return LoginHistory::where('user_id', $this->getKey())->get();
+    }
+
+    public function auditLogs(): array
+    {
+        return AuditLog::where('user_id', $this->getKey())->get();
+    }
+
+    public function personalAccessTokens(): array
+    {
+        return PersonalAccessToken::where('user_id', $this->getKey())->get();
+    }
+
+    public function dataExportRequests(): array
+    {
+        return DataExportRequest::where('user_id', $this->getKey())->get();
     }
 }

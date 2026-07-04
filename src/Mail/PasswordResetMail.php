@@ -2,9 +2,9 @@
 
 namespace JarirAhmed\AuthMicroservice\Mail;
 
-use Illuminate\Mail\Mailable;
+use JarirAhmed\AuthMicroservice\Mailer;
 
-class PasswordResetMail extends Mailable
+class PasswordResetMail extends \JarirAhmed\AuthMicroservice\Mailer
 {
     public function __construct(
         public readonly mixed $user,

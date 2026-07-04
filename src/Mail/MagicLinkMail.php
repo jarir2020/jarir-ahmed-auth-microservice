@@ -2,9 +2,9 @@
 
 namespace JarirAhmed\AuthMicroservice\Mail;
 
-use Illuminate\Mail\Mailable;
+use JarirAhmed\AuthMicroservice\Mailer;
 
-class MagicLinkMail extends Mailable
+class MagicLinkMail extends \JarirAhmed\AuthMicroservice\Mailer
 {
     public function __construct(
         public readonly mixed $user,

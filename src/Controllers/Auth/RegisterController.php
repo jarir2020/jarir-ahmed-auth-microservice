@@ -2,46 +2,46 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers\Auth;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Response;
 use JarirAhmed\AuthMicroservice\Services\AuthService;
 
-class RegisterController extends Controller
+class RegisterController
 {
     public function __construct(private AuthService $authService) {}
 
-    public function register(Request $request)
+    public function register(Request $request): Response
     {
         $data = $request->validate([
             'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email|unique:users,email',
+            'email'                 => 'required|email',
             'password'              => 'required|string|min:8|confirmed',
         ]);
 
         $user = $this->authService->register($data);
 
-        return response()->json(['message' => 'Registration successful. Please verify your email.', 'user' => $user], 201);
+        return Response::json(['message' => 'Registration successful. Please verify your email.', 'user' => $user->toArray()], 201);
     }
 
-    public function verify(Request $request)
+    public function verify(Request $request): Response
     {
         $token = $request->query('token');
         if (!$token || !$this->authService->verifyEmail($token)) {
-            return response()->json(['message' => 'Invalid or expired verification token.'], 422);
+            return Response::json(['message' => 'Invalid or expired verification token.'], 422);
         }
-        return response()->json(['message' => 'Email verified successfully.']);
+        return Response::json(['message' => 'Email verified successfully.']);
     }
 
-    public function resend(Request $request)
+    public function resend(Request $request): Response
     {
-        $request->validate(['email' => 'required|email']);
-        $userModel = config('auth-microservice.user_model');
-        $user = $userModel::where('email', $request->email)->first();
+        $data = $request->validate(['email' => 'required|email']);
+        $userModel = \JarirAhmed\AuthMicroservice\Config::get('auth-microservice.user_model');
+        $user = $userModel::where('email', $data['email'])->first();
 
         if ($user && !$user->isEmailVerified()) {
             $this->authService->resendVerification($user);
         }
 
-        return response()->json(['message' => 'If that email exists and is unverified, a new link has been sent.']);
+        return Response::json(['message' => 'If that email exists and is unverified, a new link has been sent.']);
     }
 }

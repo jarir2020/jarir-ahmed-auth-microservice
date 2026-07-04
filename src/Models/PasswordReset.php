@@ -2,27 +2,25 @@
 
 namespace JarirAhmed\AuthMicroservice\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use JarirAhmed\AuthMicroservice\Database\Model;
 
 class PasswordReset extends Model
 {
-    protected $table = 'auth_password_resets';
+    protected static string $table = 'auth_password_resets';
 
-    protected $fillable = ['user_id', 'token', 'expires_at', 'used_at'];
-
-    protected $casts = [
+    protected static array $casts = [
         'expires_at' => 'datetime',
         'used_at'    => 'datetime',
     ];
 
-    public function user()
+    public function user(): ?User
     {
-        return $this->belongsTo(config('auth-microservice.user_model'));
+        return User::find($this->user_id);
     }
 
     public function isExpired(): bool
     {
-        return $this->expires_at->isPast();
+        return $this->expires_at !== null && $this->expires_at < new \DateTimeImmutable();
     }
 
     public function isUsed(): bool

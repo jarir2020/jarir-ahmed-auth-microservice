@@ -2,9 +2,9 @@
 
 namespace JarirAhmed\AuthMicroservice\Mail;
 
-use Illuminate\Mail\Mailable;
+use JarirAhmed\AuthMicroservice\Mailer;
 
-class EmailVerificationMail extends Mailable
+class EmailVerificationMail extends \JarirAhmed\AuthMicroservice\Mailer
 {
     public function __construct(
         public readonly mixed $user,

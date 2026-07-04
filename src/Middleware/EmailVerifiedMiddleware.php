@@ -3,7 +3,7 @@
 namespace JarirAhmed\AuthMicroservice\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Request;
 
 class EmailVerifiedMiddleware
 {

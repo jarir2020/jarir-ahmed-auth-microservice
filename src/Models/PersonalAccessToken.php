@@ -2,32 +2,32 @@
 
 namespace JarirAhmed\AuthMicroservice\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use JarirAhmed\AuthMicroservice\Database\Model;
 
 class PersonalAccessToken extends Model
 {
-    protected $fillable = ['user_id', 'name', 'token', 'scopes', 'expires_at', 'last_used_at', 'revoked_at'];
+    protected static string $table = 'personal_access_tokens';
 
-    protected $casts = [
-        'scopes'       => 'array',
+    protected static array $casts = [
+        'scopes'       => 'json',
         'expires_at'   => 'datetime',
         'last_used_at' => 'datetime',
         'revoked_at'   => 'datetime',
     ];
 
-    public function user()
+    public function user(): ?User
     {
-        return $this->belongsTo(config('auth-microservice.user_model'));
+        return User::find($this->user_id);
     }
 
     public function isValid(): bool
     {
         return $this->revoked_at === null
-            && ($this->expires_at === null || $this->expires_at->isFuture());
+            && ($this->expires_at === null || $this->expires_at > new \DateTimeImmutable());
     }
 
     public function hasScope(string $scope): bool
     {
-        return empty($this->scopes) || in_array($scope, $this->scopes, true);
+        return empty($this->scopes) || in_array($scope, (array) $this->scopes, true);
     }
 }

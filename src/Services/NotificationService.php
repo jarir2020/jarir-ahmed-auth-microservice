@@ -7,7 +7,7 @@ use JarirAhmed\AuthMicroservice\Mail\WelcomeMail;
 use JarirAhmed\AuthMicroservice\Mail\PasswordResetMail;
 use JarirAhmed\AuthMicroservice\Mail\MagicLinkMail;
 use JarirAhmed\AuthMicroservice\Mail\EmailVerificationMail;
-use Illuminate\Support\Facades\Mail;
+use JarirAhmed\AuthMicroservice\Mailer;
 
 class NotificationService
 {

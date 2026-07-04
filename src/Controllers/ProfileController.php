@@ -2,9 +2,9 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use JarirAhmed\AuthMicroservice\Http\Controller;
+use JarirAhmed\AuthMicroservice\Http\Request;
+use JarirAhmed\AuthMicroservice\Support\Hash;
 use JarirAhmed\AuthMicroservice\Events\PasswordChanged;
 use JarirAhmed\AuthMicroservice\Events\AccountDeleted;
 

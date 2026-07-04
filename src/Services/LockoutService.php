@@ -3,21 +3,28 @@
 namespace JarirAhmed\AuthMicroservice\Services;
 
 use JarirAhmed\AuthMicroservice\Models\AccountLockout;
+use JarirAhmed\AuthMicroservice\Config;
+use JarirAhmed\AuthMicroservice\EventDispatcher;
 use JarirAhmed\AuthMicroservice\Events\UserLockedOut;
 
 class LockoutService
 {
     public function recordFailure(mixed $user): void
     {
-        $lockout = AccountLockout::firstOrCreate(['user_id' => $user->getKey()]);
+        $lockout = AccountLockout::where('user_id', $user->getKey())->first();
+        if (!$lockout) {
+            $lockout = AccountLockout::create(['user_id' => $user->getKey(), 'failed_attempts' => 0]);
+        }
         $lockout->increment('failed_attempts');
-        $lockout->refresh();
 
-        $max = config('auth-microservice.lockout.max_attempts', 5);
+        $max = Config::get('auth-microservice.lockout.max_attempts', 5);
         if ($lockout->failed_attempts >= $max) {
-            $minutes = config('auth-microservice.lockout.lockout_minutes', 15);
-            $lockout->update(['locked_until' => now()->addMinutes($minutes), 'unlocked_at' => null]);
-            event(new UserLockedOut($user));
+            $minutes = Config::get('auth-microservice.lockout.lockout_minutes', 15);
+            $lockout->update([
+                'locked_until' => date('Y-m-d H:i:s', time() + ($minutes * 60)),
+                'unlocked_at'  => null,
+            ]);
+            EventDispatcher::dispatch(new UserLockedOut($user));
         }
     }
 
@@ -36,6 +43,10 @@ class LockoutService
     public function adminUnlock(mixed $user, mixed $admin): void
     {
         AccountLockout::where('user_id', $user->getKey())
-            ->update(['unlocked_at' => now(), 'unlocked_by' => $admin->getKey(), 'failed_attempts' => 0]);
+            ->update([
+                'unlocked_at' => date('Y-m-d H:i:s'),
+                'unlocked_by' => $admin->getKey(),
+                'failed_attempts' => 0,
+            ]);
     }
 }

@@ -10,7 +10,7 @@ use JarirAhmed\AuthMicroservice\Services\OAuth2\Providers\TwitterProvider;
 use JarirAhmed\AuthMicroservice\Services\OAuth2\Providers\LinkedInProvider;
 use JarirAhmed\AuthMicroservice\Contracts\OAuthProviderContract;
 use JarirAhmed\AuthMicroservice\Exceptions\OAuthException;
-use Illuminate\Support\Facades\Hash;
+use JarirAhmed\AuthMicroservice\Support\Hash;
 
 class SocialLoginService
 {

@@ -2,16 +2,16 @@
 
 namespace JarirAhmed\AuthMicroservice\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use JarirAhmed\AuthMicroservice\Database\Model;
 
 class DataExportRequest extends Model
 {
-    protected $fillable = ['user_id', 'format', 'status', 'file_path', 'completed_at'];
+    protected static string $table = 'data_export_requests';
 
-    protected $casts = ['completed_at' => 'datetime'];
+    protected static array $casts = ['completed_at' => 'datetime'];
 
-    public function user()
+    public function user(): ?User
     {
-        return $this->belongsTo(config('auth-microservice.user_model'));
+        return User::find($this->user_id);
     }
 }

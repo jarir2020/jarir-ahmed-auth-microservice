@@ -2,9 +2,9 @@
 
 namespace JarirAhmed\AuthMicroservice\Mail;
 
-use Illuminate\Mail\Mailable;
+use JarirAhmed\AuthMicroservice\Mailer;
 
-class SecurityAlertMail extends Mailable
+class SecurityAlertMail extends \JarirAhmed\AuthMicroservice\Mailer
 {
     public function __construct(
         public readonly mixed $user,

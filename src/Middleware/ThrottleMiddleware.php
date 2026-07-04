@@ -3,8 +3,8 @@
 namespace JarirAhmed\AuthMicroservice\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Cache\RateLimiter;
+use JarirAhmed\AuthMicroservice\Http\Request;
+use JarirAhmed\AuthMicroservice\RateLimiter;
 
 class ThrottleMiddleware
 {

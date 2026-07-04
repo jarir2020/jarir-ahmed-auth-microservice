@@ -2,32 +2,32 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers\Auth;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Response;
 use JarirAhmed\AuthMicroservice\Services\PasswordResetService;
 use JarirAhmed\AuthMicroservice\Services\NotificationService;
 
-class PasswordResetController extends Controller
+class PasswordResetController
 {
     public function __construct(
         private PasswordResetService $passwordResetService,
         private NotificationService $notificationService
     ) {}
 
-    public function sendLink(Request $request)
+    public function sendLink(Request $request): Response
     {
-        $request->validate(['email' => 'required|email']);
-        $user = $this->passwordResetService->findUserByEmail($request->email);
+        $data = $request->validate(['email' => 'required|email']);
+        $user = $this->passwordResetService->findUserByEmail($data['email']);
 
         if ($user) {
             $token = $this->passwordResetService->createToken($user);
             $this->notificationService->sendPasswordReset($user, $token);
         }
 
-        return response()->json(['message' => 'If that email exists, a reset link has been sent.']);
+        return Response::json(['message' => 'If that email exists, a reset link has been sent.']);
     }
 
-    public function reset(Request $request)
+    public function reset(Request $request): Response
     {
         $data = $request->validate([
             'token'                 => 'required|string',
@@ -35,9 +35,9 @@ class PasswordResetController extends Controller
         ]);
 
         if (!$this->passwordResetService->reset($data['token'], $data['password'])) {
-            return response()->json(['message' => 'Invalid or expired reset token.'], 422);
+            return Response::json(['message' => 'Invalid or expired reset token.'], 422);
         }
 
-        return response()->json(['message' => 'Password reset successfully.']);
+        return Response::json(['message' => 'Password reset successfully.']);
     }
 }

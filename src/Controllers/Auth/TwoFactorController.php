@@ -2,8 +2,8 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers\Auth;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Controller;
+use JarirAhmed\AuthMicroservice\Http\Request;
 use JarirAhmed\AuthMicroservice\Services\TwoFactorService;
 
 class TwoFactorController extends Controller

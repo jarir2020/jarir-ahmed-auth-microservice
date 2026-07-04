@@ -2,19 +2,14 @@
 
 namespace JarirAhmed\AuthMicroservice\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use JarirAhmed\AuthMicroservice\Database\Model;
 
 class AuditLog extends Model
 {
-    protected $fillable = ['user_id', 'event', 'before', 'after', 'ip_address', 'user_agent'];
+    protected static string $table = 'audit_logs';
 
-    protected $casts = [
-        'before' => 'array',
-        'after'  => 'array',
+    protected static array $casts = [
+        'before' => 'json',
+        'after'  => 'json',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(config('auth-microservice.user_model'));
-    }
 }

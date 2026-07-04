@@ -2,8 +2,6 @@
 
 namespace JarirAhmed\AuthMicroservice;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Event;
 use JarirAhmed\AuthMicroservice\Events\UserRegistered;
 use JarirAhmed\AuthMicroservice\Events\UserLoggedIn;
 use JarirAhmed\AuthMicroservice\Events\UserLoggedOut;
@@ -16,46 +14,46 @@ use JarirAhmed\AuthMicroservice\Listeners\SendSecurityAlertNotification;
 use JarirAhmed\AuthMicroservice\Listeners\RecordLoginHistory;
 use JarirAhmed\AuthMicroservice\Listeners\RecordAuditLog;
 
-class AuthMicroserviceServiceProvider extends ServiceProvider
+class AuthMicroserviceServiceProvider
 {
+    public function __construct(private $container = null) {}
+
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/auth-microservice.php', 'auth-microservice');
+        Config::loadFile(__DIR__ . '/../config/auth-microservice.php');
     }
 
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadRoutesFrom(__DIR__ . '/../routes/auth.php');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'auth-microservice');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'auth-microservice');
-
-        $this->publishes([
-            __DIR__ . '/../config/auth-microservice.php' => config_path('auth-microservice.php'),
-        ], 'auth-microservice-config');
-
-        $this->publishes([
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
-        ], 'auth-microservice-migrations');
-
-        $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/auth-microservice'),
-        ], 'auth-microservice-views');
-
         $this->registerEvents();
     }
 
     protected function registerEvents(): void
     {
-        Event::listen(UserRegistered::class, SendWelcomeNotification::class);
-        Event::listen(UserLoggedIn::class, RecordLoginHistory::class);
-        Event::listen(UserLoggedIn::class, RecordAuditLog::class);
-        Event::listen(UserLoggedOut::class, RecordAuditLog::class);
-        Event::listen(PasswordChanged::class, SendSecurityAlertNotification::class);
-        Event::listen(PasswordChanged::class, RecordAuditLog::class);
-        Event::listen(TwoFactorToggled::class, SendSecurityAlertNotification::class);
-        Event::listen(TwoFactorToggled::class, RecordAuditLog::class);
-        Event::listen(SuspiciousLoginDetected::class, SendSecurityAlertNotification::class);
-        Event::listen(AccountDeleted::class, RecordAuditLog::class);
+        EventDispatcher::listen(UserRegistered::class,         SendWelcomeNotification::class);
+        EventDispatcher::listen(UserLoggedIn::class,           RecordLoginHistory::class);
+        EventDispatcher::listen(UserLoggedIn::class,           RecordAuditLog::class);
+        EventDispatcher::listen(UserLoggedOut::class,          RecordAuditLog::class);
+        EventDispatcher::listen(PasswordChanged::class,        SendSecurityAlertNotification::class);
+        EventDispatcher::listen(PasswordChanged::class,        RecordAuditLog::class);
+        EventDispatcher::listen(TwoFactorToggled::class,       SendSecurityAlertNotification::class);
+        EventDispatcher::listen(TwoFactorToggled::class,       RecordAuditLog::class);
+        EventDispatcher::listen(SuspiciousLoginDetected::class, SendSecurityAlertNotification::class);
+        EventDispatcher::listen(AccountDeleted::class,         RecordAuditLog::class);
+    }
+
+    public function getMigrationPath(): string
+    {
+        return __DIR__ . '/../database/migrations';
+    }
+
+    public function getConfigPath(): string
+    {
+        return __DIR__ . '/../config/auth-microservice.php';
+    }
+
+    public function getViewPath(): string
+    {
+        return __DIR__ . '/../resources/views';
     }
 }

@@ -2,17 +2,17 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers\Auth;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Response;
 use JarirAhmed\AuthMicroservice\Services\AuthService;
 
-class LogoutController extends Controller
+class LogoutController
 {
     public function __construct(private AuthService $authService) {}
 
-    public function logout(Request $request)
+    public function logout(Request $request): Response
     {
         $this->authService->logout($request->user());
-        return response()->json(['message' => 'Logged out successfully.']);
+        return Response::json(['message' => 'Logged out successfully.']);
     }
 }

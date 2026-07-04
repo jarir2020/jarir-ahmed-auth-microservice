@@ -2,10 +2,10 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers\Auth;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Controller;
+use JarirAhmed\AuthMicroservice\Http\Request;
 use JarirAhmed\AuthMicroservice\Services\SocialLoginService;
-use Illuminate\Support\Facades\Auth;
+use JarirAhmed\AuthMicroservice\Support\Auth;
 
 class SocialLoginController extends Controller
 {

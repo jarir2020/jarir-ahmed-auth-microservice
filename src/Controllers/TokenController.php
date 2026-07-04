@@ -2,8 +2,8 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Controller;
+use JarirAhmed\AuthMicroservice\Http\Request;
 use JarirAhmed\AuthMicroservice\Services\TokenService;
 
 class TokenController extends Controller

@@ -2,18 +2,13 @@
 
 namespace JarirAhmed\AuthMicroservice\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use JarirAhmed\AuthMicroservice\Database\Model;
 
 class TwoFactorBackupCode extends Model
 {
-    protected $fillable = ['user_id', 'code', 'used_at'];
+    protected static string $table = 'two_factor_backup_codes';
 
-    protected $casts = ['used_at' => 'datetime'];
-
-    public function user()
-    {
-        return $this->belongsTo(config('auth-microservice.user_model'));
-    }
+    protected static array $casts = ['used_at' => 'datetime'];
 
     public function isUsed(): bool
     {

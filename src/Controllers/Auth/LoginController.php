@@ -2,17 +2,17 @@
 
 namespace JarirAhmed\AuthMicroservice\Controllers\Auth;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Request;
+use JarirAhmed\AuthMicroservice\Http\Response;
 use JarirAhmed\AuthMicroservice\Services\AuthService;
 use JarirAhmed\AuthMicroservice\Exceptions\AccountLockedException;
 use JarirAhmed\AuthMicroservice\Exceptions\EmailNotVerifiedException;
 
-class LoginController extends Controller
+class LoginController
 {
     public function __construct(private AuthService $authService) {}
 
-    public function login(Request $request)
+    public function login(Request $request): Response
     {
         $data = $request->validate([
             'email'       => 'required|email',
@@ -25,23 +25,23 @@ class LoginController extends Controller
                 $data['email'],
                 $data['password'],
                 $request->ip(),
-                $request->userAgent() ?? '',
+                $request->userAgent(),
                 $data['remember_me'] ?? false
             );
         } catch (AccountLockedException $e) {
-            return response()->json(['message' => $e->getMessage()], 423);
+            return Response::json(['message' => $e->getMessage()], 423);
         } catch (EmailNotVerifiedException $e) {
-            return response()->json(['message' => $e->getMessage()], 403);
+            return Response::json(['message' => $e->getMessage()], 403);
         }
 
         if (!$user) {
-            return response()->json(['message' => 'Invalid credentials.'], 401);
+            return Response::json(['message' => 'Invalid credentials.'], 401);
         }
 
         if ($user->two_factor_enabled) {
-            return response()->json(['message' => '2FA required.', 'requires_2fa' => true, 'user_id' => $user->getKey()]);
+            return Response::json(['message' => '2FA required.', 'requires_2fa' => true, 'user_id' => $user->getKey()]);
         }
 
-        return response()->json(['message' => 'Login successful.', 'user' => $user]);
+        return Response::json(['message' => 'Login successful.', 'user' => $user->toArray()]);
     }
 }
