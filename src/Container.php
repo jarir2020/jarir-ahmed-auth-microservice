@@ -2,7 +2,9 @@
 
 namespace JarirAhmed\AuthMicroservice;
 
-class Container
+use Psr\Container\ContainerInterface;
+
+class Container implements ContainerInterface
 {
     private array $bindings  = [];
     private array $instances = [];
@@ -24,10 +26,20 @@ class Container
 
     public function make(string $abstract): mixed
     {
-        if (isset($this->bindings[$abstract])) {
-            return ($this->bindings[$abstract])($this);
+        return $this->get($abstract);
+    }
+
+    public function get(string $id): mixed
+    {
+        if (isset($this->bindings[$id])) {
+            return ($this->bindings[$id])($this);
         }
-        return $this->build($abstract);
+        return $this->build($id);
+    }
+
+    public function has(string $id): bool
+    {
+        return isset($this->bindings[$id]) || class_exists($id);
     }
 
     private function build(string $class): mixed

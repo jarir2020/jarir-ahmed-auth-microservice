@@ -2,29 +2,32 @@
 
 namespace JarirAhmed\AuthMicroservice;
 
-class EventDispatcher
-{
-    private static array $listeners = [];
+use Psr\EventDispatcher\EventDispatcherInterface;
 
-    public static function listen(string $event, string|callable $listener): void
+class EventDispatcher implements EventDispatcherInterface
+{
+    private array $listeners = [];
+
+    public function listen(string $event, string|callable $listener): void
     {
-        self::$listeners[$event][] = $listener;
+        $this->listeners[$event][] = $listener;
     }
 
-    public static function dispatch(object $event): void
+    public function dispatch(object $event): object
     {
         $class = get_class($event);
-        foreach (self::$listeners[$class] ?? [] as $listener) {
+        foreach ($this->listeners[$class] ?? [] as $listener) {
             if (is_callable($listener)) {
                 $listener($event);
             } else {
                 (new $listener())->handle($event);
             }
         }
+        return $event;
     }
 
-    public static function reset(): void
+    public function reset(): void
     {
-        self::$listeners = [];
+        $this->listeners = [];
     }
 }

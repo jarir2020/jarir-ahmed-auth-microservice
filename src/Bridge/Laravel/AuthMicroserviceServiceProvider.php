@@ -1,7 +1,10 @@
 <?php
 
-namespace JarirAhmed\AuthMicroservice;
+namespace JarirAhmed\AuthMicroservice\Bridge\Laravel;
 
+use Illuminate\Support\ServiceProvider;
+use JarirAhmed\AuthMicroservice\Config;
+use JarirAhmed\AuthMicroservice\EventDispatcher;
 use JarirAhmed\AuthMicroservice\Events\UserRegistered;
 use JarirAhmed\AuthMicroservice\Events\UserLoggedIn;
 use JarirAhmed\AuthMicroservice\Events\UserLoggedOut;
@@ -14,9 +17,8 @@ use JarirAhmed\AuthMicroservice\Listeners\SendSecurityAlertNotification;
 use JarirAhmed\AuthMicroservice\Listeners\RecordLoginHistory;
 use JarirAhmed\AuthMicroservice\Listeners\RecordAuditLog;
 
-class AuthMicroserviceServiceProvider
+class AuthMicroserviceServiceProvider extends ServiceProvider
 {
-    public function __construct(private $container = null) {}
 
     public function register(): void
     {
