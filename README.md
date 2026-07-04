@@ -23,14 +23,36 @@ A self-contained PHP auth package for Laravel. Ships with its own routes, contro
 ## Requirements
 
 - PHP >= 8.0
-- Laravel >= 11.0
 - Extensions: `ext-hash`, `ext-json`, `ext-curl`, `ext-mbstring`, `ext-sodium`
+- (Optional) Laravel >= 11.0 if using as a Laravel drop-in
 
 ## Installation
 
 ```bash
 composer require jarir-ahmed/auth-microservice
 ```
+
+### For Non-Laravel (Framework-Agnostic) Users
+
+Since this package is completely framework-agnostic, you can integrate it into any PHP application (Symfony, Slim, vanilla PHP):
+
+1. **Dependency Injection**: Use our provided `Container` (or your own PSR-11 container) to bind the required Repositories.
+```php
+use JarirAhmed\AuthMicroservice\Container;
+use JarirAhmed\AuthMicroservice\Contracts\UserRepositoryInterface;
+use App\Repositories\MyUserRepository;
+
+$container = new Container();
+$container->bind(UserRepositoryInterface::class, function () {
+    return new MyUserRepository(); // Provide your own DB implementation
+});
+```
+2. **Configuration**: Load the package configuration array and customize it for your needs.
+3. **Database**: Use the provided schemas in `database/migrations` to create the required tables in your database using your preferred tool (Phinx, Doctrine, raw SQL).
+
+### For Laravel Users (Drop-in)
+
+If you are using Laravel, the package will auto-discover its Service Provider and act as a seamless drop-in.
 
 Publish config and migrations:
 
@@ -40,8 +62,7 @@ php artisan vendor:publish --tag=auth-microservice-migrations
 php artisan migrate
 ```
 
-## Configuration
-
+Configuration:
 ```bash
 php artisan vendor:publish --tag=auth-microservice-config
 ```
