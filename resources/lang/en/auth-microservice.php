@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'register_success'        => 'Registration successful. Please verify your email.',
+    'email_verified'          => 'Email verified successfully.',
+    'email_verify_invalid'    => 'Invalid or expired verification token.',
+    'login_success'           => 'Login successful.',
+    'login_invalid'           => 'Invalid credentials.',
+    'logout_success'          => 'Logged out successfully.',
+    'account_locked'          => 'Account is temporarily locked due to too many failed login attempts.',
+    'email_not_verified'      => 'Email address has not been verified.',
+    'password_reset_sent'     => 'If that email exists, a reset link has been sent.',
+    'password_reset_success'  => 'Password reset successfully.',
+    'password_reset_invalid'  => 'Invalid or expired reset token.',
+    'magic_link_sent'         => 'If that email exists, a sign-in link has been sent.',
+    'magic_link_invalid'      => 'Invalid or expired magic link.',
+    '2fa_required'            => 'Two-factor authentication required.',
+    '2fa_verified'            => '2FA verified.',
+    '2fa_invalid'             => 'Invalid 2FA code.',
+    '2fa_enabled'             => '2FA enabled.',
+    '2fa_disabled'            => '2FA disabled.',
+    'token_revoked'           => 'Token revoked.',
+    'profile_updated'         => 'Profile updated.',
+    'password_changed'        => 'Password changed successfully.',
+    'account_deleted'         => 'Account deleted.',
+];

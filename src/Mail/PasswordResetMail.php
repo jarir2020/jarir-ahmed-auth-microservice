@@ -1,0 +1,19 @@
+<?php
+
+namespace JarirAhmed\AuthMicroservice\Mail;
+
+use Illuminate\Mail\Mailable;
+
+class PasswordResetMail extends Mailable
+{
+    public function __construct(
+        public readonly mixed $user,
+        public readonly string $token
+    ) {}
+
+    public function build(): static
+    {
+        return $this->subject('Reset Your Password')
+            ->view('auth-microservice::emails.password-reset');
+    }
+}
